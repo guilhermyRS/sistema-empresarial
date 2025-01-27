@@ -28,12 +28,13 @@ function runQuery(query) {
 
 function checkColumnExists(table, column) {
     return new Promise((resolve, reject) => {
-        db.get(`PRAGMA table_info(${table})`, [], (err, rows) => {
+        db.all(`PRAGMA table_info(${table})`, [], (err, rows) => {
             if (err) {
                 reject(err);
                 return;
             }
-            const columnExists = rows && rows.some(row => row.name === column);
+            // Usando db.all em vez de db.get para obter todas as colunas
+            const columnExists = Array.isArray(rows) && rows.some(row => row.name === column);
             resolve(columnExists);
         });
     });
@@ -51,6 +52,8 @@ async function initializeDatabase() {
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP
         )`);
 
+        console.log('Users table created or already exists');
+
         // 2. Criar tabela de empresas
         await runQuery(`CREATE TABLE IF NOT EXISTS companies (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -60,6 +63,8 @@ async function initializeDatabase() {
             created_by INTEGER,
             FOREIGN KEY(created_by) REFERENCES users(id)
         )`);
+
+        console.log('Companies table created or already exists');
 
         // 3. Criar tabela de relação usuário-empresa
         await runQuery(`CREATE TABLE IF NOT EXISTS user_companies (
@@ -71,35 +76,46 @@ async function initializeDatabase() {
             PRIMARY KEY(user_id, company_id)
         )`);
 
-        // 4. Verificar se a coluna last_company_id já existe antes de tentar adicioná-la
-        const hasLastCompanyId = await checkColumnExists('users', 'last_company_id');
-        if (!hasLastCompanyId) {
-            await runQuery(`PRAGMA foreign_keys=off;`);
-            await runQuery(`ALTER TABLE users ADD COLUMN last_company_id INTEGER REFERENCES companies(id)`);
-            await runQuery(`PRAGMA foreign_keys=on;`);
-        }
+        console.log('User-companies table created or already exists');
 
-        // 5. Criar usuário master se não existir
-        db.get("SELECT * FROM users WHERE role = 'master'", [], async (err, row) => {
-            if (err) {
-                console.error('Error checking master user:', err);
-                return;
-            }
-            
-            if (!row) {
-                try {
-                    const hashedPassword = await bcrypt.hash('master123', 10);
-                    db.run(`INSERT INTO users (username, password, role) 
-                           VALUES ('master', ?, 'master')`, 
-                           [hashedPassword]);
-                    console.log('Master user created successfully');
-                } catch (err) {
-                    console.error('Error creating master user:', err);
-                }
-            }
-        });
+        // 4. Verificar se o usuário master existe
+        const createMasterUser = () => {
+            return new Promise(async (resolve, reject) => {
+                db.get("SELECT * FROM users WHERE role = 'master'", [], async (err, row) => {
+                    if (err) {
+                        reject(err);
+                        return;
+                    }
+                    
+                    if (!row) {
+                        try {
+                            const hashedPassword = await bcrypt.hash('master123', 10);
+                            db.run(
+                                `INSERT INTO users (username, password, role) VALUES ('master', ?, 'master')`,
+                                [hashedPassword],
+                                (err) => {
+                                    if (err) {
+                                        reject(err);
+                                    } else {
+                                        console.log('Master user created successfully');
+                                        resolve();
+                                    }
+                                }
+                            );
+                        } catch (err) {
+                            reject(err);
+                        }
+                    } else {
+                        console.log('Master user already exists');
+                        resolve();
+                    }
+                });
+            });
+        };
 
+        await createMasterUser();
         console.log('Database initialized successfully');
+
     } catch (error) {
         console.error('Error initializing database:', error);
     }
