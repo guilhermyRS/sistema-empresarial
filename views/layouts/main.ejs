@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        dark: '#121214',
+                        primary: '#006dff',
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body class="bg-dark text-gray-100">
+    <div class="min-h-screen flex">
+        <!-- Sidebar -->
+        <aside id="sidebar"
+            class="bg-dark w-64 min-h-screen flex flex-col transition-all duration-300 border-r border-gray-800">
+            <div class="p-4 border-b border-gray-800">
+                <h2 class="text-2xl font-bold text-primary">Admin Panel</h2>
+            </div>
+            <nav class="flex-grow p-4">
+                <ul class="space-y-2">
+                    <% if (locals.user) { %>
+                        <% if (locals.user.role==='master' ) { %>
+                            <li>
+                                <a href="/users"
+                                    class="flex items-center p-2 rounded-lg hover:bg-primary hover:bg-opacity-20 transition-colors">
+                                    <i class="fas fa-users w-6"></i>
+                                    <span>Usuários</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/companies"
+                                    class="flex items-center p-2 rounded-lg hover:bg-primary hover:bg-opacity-20 transition-colors">
+                                    <i class="fas fa-building w-6"></i>
+                                    <span>Empresas</span>
+                                </a>
+                            </li>
+                            <% } %>
+                                <li>
+                                    <a href="/dashboard"
+                                        class="flex items-center p-2 rounded-lg hover:bg-primary hover:bg-opacity-20 transition-colors">
+                                        <i class="fas fa-home w-6"></i>
+                                        <span>Home</span>
+                                    </a>
+                                </li>
+                                <% } %>
+                </ul>
+            </nav>
+            <% if (locals.user) { %>
+                <div class="p-4 border-t border-gray-800">
+                    <div class="space-y-3">
+                        <!-- Informações do Usuário -->
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-user-circle text-primary"></i>
+                            <span>
+                                <%= user.username %>
+                            </span>
+                            <span class="text-xs px-2 py-1 bg-primary/20 text-primary rounded-full">
+                                <%= user.role %>
+                            </span>
+                        </div>
+
+                        <!-- Informações da Empresa -->
+                        <% if (user.role==='admin' ) { %>
+                            <% if (locals.currentCompany) { %>
+                                <div class="flex flex-col space-y-1">
+                                    <div class="flex items-center space-x-2 text-gray-400">
+                                        <i class="fas fa-building text-primary"></i>
+                                        <span class="text-sm">
+                                            <%= currentCompany.name %>
+                                        </span>
+                                    </div>
+                                    <div class="text-xs text-gray-500">
+                                        <i class="fas fa-id-card"></i>
+                                        CNPJ: <%= currentCompany.cnpj %>
+                                    </div>
+                                </div>
+                                <% } else { %>
+                                    <div class="text-sm text-gray-400">
+                                        <i class="fas fa-exclamation-circle text-yellow-500"></i>
+                                        Sem empresa associada
+                                    </div>
+                                    <% } %>
+                                        <% } %>
+
+                                            <!-- Botão de Logout -->
+                                            <a href="/auth/logout"
+                                                class="mt-2 flex items-center p-2 rounded-lg hover:bg-red-500 hover:bg-opacity-20 text-red-500 transition-colors">
+                                                <i class="fas fa-sign-out-alt w-6"></i>
+                                                <span>Logout</span>
+                                            </a>
+                    </div>
+                </div>
+                <% } %>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="flex-grow">
+            <!-- Top Bar -->
+            <header class="bg-dark border-b border-gray-800 p-4 flex items-center justify-between">
+                <button id="sidebarToggle" class="text-gray-400 hover:text-primary">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+                <div class="text-gray-400">
+                    <%= new Date().toLocaleDateString('pt-BR') %>
+                </div>
+            </header>
+
+            <!-- Content -->
+            <main class="p-6">
+                <%- body %>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        // Sidebar Toggle
+        const sidebar = document.getElementById('sidebar');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const isSidebarOpen = localStorage.getItem('sidebarOpen') !== 'false';
+
+        function toggleSidebar() {
+            const isOpen = sidebar.classList.contains('w-64');
+            sidebar.classList.toggle('w-64');
+            sidebar.classList.toggle('w-16');
+
+            // Toggle text visibility
+            const texts = sidebar.querySelectorAll('span');
+            texts.forEach(text => text.classList.toggle('hidden'));
+
+            localStorage.setItem('sidebarOpen', !isOpen);
+        }
+
+        // Set initial state
+        if (!isSidebarOpen) {
+            toggleSidebar();
+        }
+
+        sidebarToggle.addEventListener('click', toggleSidebar);
+    </script>
+</body>
+
+</html>

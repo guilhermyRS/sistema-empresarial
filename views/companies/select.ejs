@@ -1,0 +1,38 @@
+<div class="max-w-2xl mx-auto">
+    <div class="bg-dark rounded-lg border border-gray-800">
+        <div class="p-4 border-b border-gray-800">
+            <h2 class="text-xl font-semibold">Selecionar Empresa</h2>
+        </div>
+
+        <div class="p-4">
+            <% if (companies && companies.length > 0) { %>
+                <div class="grid gap-4">
+                    <% companies.forEach(company => { %>
+                        <div class="flex items-center justify-between p-4 rounded-lg border border-gray-800 hover:border-primary/50 transition-colors">
+                            <div class="flex items-center space-x-3">
+                                <i class="fas fa-building text-primary"></i>
+                                <div>
+                                    <h3 class="font-medium"><%= company.name %></h3>
+                                    <p class="text-sm text-gray-400"><%= company.cnpj %></p>
+                                </div>
+                            </div>
+                            <form action="/companies/select" method="POST">
+                                <input type="hidden" name="companyId" value="<%= company.id %>">
+                                <button type="submit" 
+                                        class="px-4 py-2 rounded-lg <%= company.is_current ? 'bg-primary text-white' : 'border border-primary/50 text-primary hover:bg-primary/10' %> transition-colors">
+                                    <%= company.is_current ? 'Selecionada' : 'Selecionar' %>
+                                </button>
+                            </form>
+                        </div>
+                    <% }) %>
+                </div>
+            <% } else { %>
+                <div class="text-center py-8 text-gray-400">
+                    <i class="fas fa-info-circle text-2xl mb-2"></i>
+                    <p>Você não está associado a nenhuma empresa.</p>
+                    <p class="text-sm mt-2">Entre em contato com o administrador do sistema.</p>
+                </div>
+            <% } %>
+        </div>
+    </div>
+</div>
