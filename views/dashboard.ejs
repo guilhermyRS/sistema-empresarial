@@ -1,0 +1,166 @@
+<div class="container mx-auto">
+    <h1 class="text-2xl font-bold text-gray-100 mb-6">Dashboard</h1>
+
+    <!-- Cards Principais -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <!-- Total de Produtos -->
+        <div class="bg-gradient-to-br from-blue-600 to-blue-800 p-6 rounded-lg shadow-lg transform hover:scale-105 transition-transform">
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="text-gray-100 text-sm mb-2">Total de Produtos</p>
+                    <h3 class="text-3xl font-bold text-white"><%= stats.total_products %></h3>
+                </div>
+                <div class="p-3 bg-blue-500 bg-opacity-30 rounded-full">
+                    <i class="fas fa-box text-white text-xl"></i>
+                </div>
+            </div>
+            <p class="text-blue-100 text-sm mt-4">Total de itens cadastrados</p>
+        </div>
+
+        <!-- Valor Total em Estoque -->
+        <div class="bg-gradient-to-br from-emerald-600 to-emerald-800 p-6 rounded-lg shadow-lg transform hover:scale-105 transition-transform">
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="text-gray-100 text-sm mb-2">Valor em Estoque</p>
+                    <h3 class="text-3xl font-bold text-white">R$ <%= parseFloat(stats.total_inventory_cost).toLocaleString('pt-BR', { minimumFractionDigits: 2 }) %></h3>
+                </div>
+                <div class="p-3 bg-emerald-500 bg-opacity-30 rounded-full">
+                    <i class="fas fa-dollar-sign text-white text-xl"></i>
+                </div>
+            </div>
+            <p class="text-emerald-100 text-sm mt-4">Valor total investido</p>
+        </div>
+
+        <!-- Produtos com Estoque Baixo -->
+        <div class="bg-gradient-to-br from-amber-500 to-amber-700 p-6 rounded-lg shadow-lg transform hover:scale-105 transition-transform">
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="text-gray-100 text-sm mb-2">Estoque Baixo</p>
+                    <h3 class="text-3xl font-bold text-white"><%= stats.low_stock_count %></h3>
+                </div>
+                <div class="p-3 bg-amber-500 bg-opacity-30 rounded-full">
+                    <i class="fas fa-exclamation-triangle text-white text-xl"></i>
+                </div>
+            </div>
+            <p class="text-amber-100 text-sm mt-4">Produtos precisando de reposição</p>
+        </div>
+
+        <!-- Produtos sem Estoque -->
+        <div class="bg-gradient-to-br from-red-600 to-red-800 p-6 rounded-lg shadow-lg transform hover:scale-105 transition-transform">
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="text-gray-100 text-sm mb-2">Sem Estoque</p>
+                    <h3 class="text-3xl font-bold text-white"><%= stats.out_of_stock_count %></h3>
+                </div>
+                <div class="p-3 bg-red-500 bg-opacity-30 rounded-full">
+                    <i class="fas fa-times-circle text-white text-xl"></i>
+                </div>
+            </div>
+            <p class="text-red-100 text-sm mt-4">Produtos esgotados</p>
+        </div>
+    </div>
+
+    <!-- Cards de Lucro -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        <!-- Lucro Potencial Total -->
+        <div class="bg-gradient-to-br from-purple-600 to-purple-800 p-6 rounded-lg shadow-lg transform hover:scale-105 transition-transform">
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="text-gray-100 text-sm mb-2">Lucro Potencial Total</p>
+                    <h3 class="text-3xl font-bold text-white">
+                        R$ <%= parseFloat(stats.potential_profit).toLocaleString('pt-BR', { minimumFractionDigits: 2 }) %>
+                    </h3>
+                </div>
+                <div class="p-3 bg-purple-500 bg-opacity-30 rounded-full">
+                    <i class="fas fa-chart-line text-white text-xl"></i>
+                </div>
+            </div>
+            <p class="text-purple-100 text-sm mt-4">Lucro previsto na venda de todo estoque</p>
+        </div>
+
+        <!-- Lucro Médio por Produto -->
+        <div class="bg-gradient-to-br from-indigo-600 to-indigo-800 p-6 rounded-lg shadow-lg transform hover:scale-105 transition-transform">
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="text-gray-100 text-sm mb-2">Lucro Médio por Produto</p>
+                    <h3 class="text-3xl font-bold text-white">
+                        R$ <%= parseFloat(stats.avg_profit_per_unit).toLocaleString('pt-BR', { minimumFractionDigits: 2 }) %>
+                    </h3>
+                </div>
+                <div class="p-3 bg-indigo-500 bg-opacity-30 rounded-full">
+                    <i class="fas fa-calculator text-white text-xl"></i>
+                </div>
+            </div>
+            <p class="text-indigo-100 text-sm mt-4">Média de lucro por unidade</p>
+        </div>
+
+        <!-- Card do Dízimo -->
+        <div class="bg-gradient-to-br from-teal-600 to-teal-800 p-6 rounded-lg shadow-lg transform hover:scale-105 transition-transform">
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="text-gray-100 text-sm mb-2">Dízimo da Igreja (10%)</p>
+                    <h3 class="text-3xl font-bold text-white">
+                        R$ <%= parseFloat(stats.potential_profit * 0.1).toLocaleString('pt-BR', { minimumFractionDigits: 2 }) %>
+                    </h3>
+                </div>
+                <div class="p-3 bg-teal-500 bg-opacity-30 rounded-full">
+                    <i class="fas fa-church text-white text-xl"></i>
+                </div>
+            </div>
+            <p class="text-teal-100 text-sm mt-4">10% do lucro total reservado para dízimo</p>
+        </div>
+    </div>
+
+    <!-- Seção de Detalhes -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Top Produtos -->
+        <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+            <h2 class="text-xl font-bold text-gray-100 mb-4 flex items-center">
+                <i class="fas fa-trophy text-yellow-500 mr-2"></i>
+                Top Produtos
+            </h2>
+            <div class="space-y-4">
+                <% topProducts.forEach(product => { %>
+                    <div class="flex justify-between items-center p-3 bg-gray-700 rounded-lg hover:bg-gray-600 transition-colors">
+                        <div>
+                            <h4 class="font-medium text-gray-100"><%= product.name %></h4>
+                            <p class="text-sm text-gray-400">Quantidade: <%= product.quantity %></p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-green-400">R$ <%= parseFloat(product.selling_price).toLocaleString('pt-BR', { minimumFractionDigits: 2 }) %></p>
+                            <p class="text-sm text-gray-400"><%= Math.round(product.margin_percentage) %>% margem</p>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        </div>
+
+        <!-- Estatísticas por Categoria -->
+        <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+            <h2 class="text-xl font-bold text-gray-100 mb-4 flex items-center">
+                <i class="fas fa-chart-pie text-blue-500 mr-2"></i>
+                Estatísticas por Categoria
+            </h2>
+            <div class="space-y-4">
+                <% categoryStats.forEach(category => { %>
+                    <div class="p-3 bg-gray-700 rounded-lg hover:bg-gray-600 transition-colors">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h4 class="font-medium text-gray-100"><%= category.category %></h4>
+                                <p class="text-sm text-gray-400"><%= category.product_count %> produtos</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-blue-400">R$ <%= parseFloat(category.total_potential_revenue).toLocaleString('pt-BR', { minimumFractionDigits: 2 }) %></p>
+                                <p class="text-sm text-gray-400"><%= category.total_quantity %> unidades</p>
+                            </div>
+                        </div>
+                        <!-- Barra de Progresso -->
+                        <div class="mt-2 h-2 bg-gray-600 rounded-full">
+                            <div class="h-full bg-blue-500 rounded-full" style="width: <%= (category.product_count / stats.total_products * 100) %>%"></div>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        </div>
+    </div>
+</div>

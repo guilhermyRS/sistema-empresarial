@@ -7,11 +7,13 @@ const expressLayouts = require('express-ejs-layouts');
 
 const app = express();
 
-// Configurações EJS
+
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(expressLayouts);
-app.set('layout', 'layouts/main');
+app.set('layout', 'layouts/main'); // Define o layout padrão
+app.set("layout extractScripts", true);
+app.set("layout extractStyles", true);
 
 // Middleware
 app.use(express.static(path.join(__dirname, 'public')));
@@ -47,6 +49,9 @@ app.use(async (req, res, next) => {
     next();
 });
 
+app.use(methodOverride('_method'));
+app.use(express.urlencoded({ extended: true }));
+
 app.get('/login', (req, res) => {
     if (req.session && req.session.user) {
         return res.redirect('/users');
@@ -59,9 +64,24 @@ app.use('/auth', require('./routes/auth'));
 app.use('/users', require('./routes/users'));
 app.use('/companies', require('./routes/companies'));
 
+app.use('/products', require('./routes/products'));
+
 
 // Rota padrão
-app.get('/', (req, res) => res.redirect('/login'));
+app.get('/', (req, res) => {
+    if (req.session && req.session.user) {
+        return res.redirect('/dashboard');
+    }
+    res.redirect('/login');
+});
+
+// Adicione esta rota para o dashboard
+app.get('/dashboard', (req, res) => {
+    if (!req.session || !req.session.user) {
+        return res.redirect('/login');
+    }
+    res.redirect('/products/dashboard');
+});
 
 // Tratamento de erro 404
 app.use((req, res) => {

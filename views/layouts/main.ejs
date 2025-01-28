@@ -36,7 +36,7 @@
             <nav class="flex-grow p-4">
                 <ul class="space-y-2">
                     <% if (locals.user) { %>
-                        <!-- Home Link (Agora primeiro) -->
+                        <!-- Home Link -->
                         <li>
                             <a href="/dashboard"
                                 class="group flex items-center p-2 rounded-lg hover:bg-primary hover:bg-opacity-20 transition-colors">
@@ -51,8 +51,24 @@
                                 </div>
                             </a>
                         </li>
-
-                        <% if (locals.user.role==='master' ) { %>
+            
+                        <!-- Link de Produtos (para master e admin) -->
+                        <li>
+                            <a href="/products"
+                                class="group flex items-center p-2 rounded-lg hover:bg-primary hover:bg-opacity-20 transition-colors">
+                                <div class="w-6 flex justify-center">
+                                    <i class="fas fa-box"></i>
+                                </div>
+                                <span class="transition-opacity duration-300 ml-2 truncate"
+                                    :class="{'opacity-0': !isOpen}">Produtos</span>
+                                <div class="absolute left-full ml-2 px-2 py-1 bg-dark text-sm rounded-md invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-opacity"
+                                    :class="{'hidden': isOpen}">
+                                    Produtos
+                                </div>
+                            </a>
+                        </li>
+            
+                        <% if (locals.user.role === 'master') { %>
                             <li>
                                 <a href="/users"
                                     class="group flex items-center p-2 rounded-lg hover:bg-primary hover:bg-opacity-20 transition-colors">
@@ -81,11 +97,10 @@
                                     </div>
                                 </a>
                             </li>
-                            <% } %>
-                                <% } %>
+                        <% } %>
+                    <% } %>
                 </ul>
             </nav>
-
             <% if (locals.user) { %>
                 <div class="p-4 border-t border-gray-800">
                     <div class="space-y-3">

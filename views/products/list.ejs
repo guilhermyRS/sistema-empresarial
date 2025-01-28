@@ -1,0 +1,101 @@
+<!-- views/products/list.ejs -->
+<div class="container mx-auto">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-gray-100">Lista de Produtos</h1>
+        <a href="/products/create"
+            class="bg-primary hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors">
+            <i class="fas fa-plus mr-2"></i>Novo Produto
+        </a>
+    </div>
+
+    <div class="bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead>
+                    <tr class="bg-gray-900">
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                            Produto</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">SKU
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Preço
+                            Custo</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Preço
+                            Venda</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                            Estoque</th>
+                        <% if (userRole==='master' ) { %>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                                Empresa</th>
+                            <% } %>
+                                <th
+                                    class="px-6 py-3 text-center text-xs font-medium text-gray-300 uppercase tracking-wider">
+                                    Ações</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-700">
+                    <% products.forEach(product=> { %>
+                        <tr class="hover:bg-gray-700 transition-colors">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <div>
+                                        <div class="text-sm font-medium text-gray-100">
+                                            <%= product.name %>
+                                        </div>
+                                        <div class="text-sm text-gray-400">
+                                            <%= product.category %>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                                <%= product.sku %>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                                R$ <%= parseFloat(product.cost_price).toFixed(2) %>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                                R$ <%= parseFloat(product.selling_price).toFixed(2) %>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <% if (product.quantity <=product.min_quantity) { %>
+                                    <span
+                                        class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                        <%= product.quantity %>
+                                            <%= product.unit_type %>
+                                    </span>
+                                    <% } else { %>
+                                        <span class="text-sm text-gray-300">
+                                            <%= product.quantity %>
+                                                <%= product.unit_type %>
+                                        </span>
+                                        <% } %>
+                            </td>
+                            <% if (userRole==='master' ) { %>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                                    <%= product.company_name %>
+                                </td>
+                                <% } %>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-center">
+                                        <div class="flex justify-center space-x-2">
+                                            <a href="/products/edit/<%= product.id %>"
+                                                class="text-primary hover:text-blue-400">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <% if (userRole==='master' ) { %>
+                                                <form action="/products/<%= product.id %>?_method=DELETE" method="POST"
+                                                    class="inline"
+                                                    onsubmit="return confirm('Tem certeza que deseja excluir este produto?');">
+                                                    <button type="submit" class="text-red-500 hover:text-red-400">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </form>
+                                                <% } %>
+                                        </div>
+                                    </td>
+                        </tr>
+                        <% }); %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
