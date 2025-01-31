@@ -1,0 +1,116 @@
+<div class="space-y-6">
+  <div class="flex justify-between items-center">
+    <h1 class="text-2xl font-bold">Nova Venda</h1>
+    <a href="/sales" class="text-gray-400 hover:text-white">
+      <i class="fas fa-times"></i>
+    </a>
+  </div>
+
+  <% if (error) { %>
+    <div class="bg-red-500/20 border border-red-500 text-red-500 px-4 py-2 rounded-lg">
+      <%= error %>
+    </div>
+    <% } %>
+
+      <form action="/sales/create" method="POST" id="saleForm" class="space-y-6">
+        <div class="bg-gray-800 p-6 rounded-lg space-y-4">
+          <!-- Cliente -->
+          <div>
+            <label class="block text-sm font-medium text-gray-400">Cliente</label>
+            <select name="client_id" required
+              class="mt-1 block w-full bg-gray-700 border-gray-600 text-white rounded-md">
+              <option value="">Selecione um cliente</option>
+              <% clients.forEach(client=> { %>
+                <option value="<%= client.id %>">
+                  <%= client.name %>
+                </option>
+                <% }) %>
+            </select>
+          </div>
+
+          <!-- Adicione isso logo após o campo de cliente -->
+        <!-- Substituir a verificação existente por: -->
+<% if (userRole === 'master') { %>
+  <div>
+      <label class="block text-sm font-medium text-gray-400">Empresa</label>
+      <select name="company_id" required class="mt-1 block w-full bg-gray-700 border-gray-600 text-white rounded-md">
+          <option value="">Selecione uma empresa</option>
+          <% if (companies && companies.length > 0) { %>
+              <% companies.forEach(company => { %>
+                  <option value="<%= company.id %>"><%= company.name %></option>
+              <% }) %>
+          <% } %>
+      </select>
+  </div>
+<% } %>
+
+              <!-- Produtos -->
+              <div id="products-container" class="space-y-4">
+                <div class="product-item bg-gray-700/50 p-4 rounded-lg space-y-4">
+                  <div class="grid grid-cols-12 gap-4">
+                    <div class="col-span-5">
+                      <label class="block text-sm font-medium text-gray-400">Produto</label>
+                      <select name="items[0][product_id]" required
+                        class="product-select mt-1 block w-full bg-gray-700 border-gray-600 text-white rounded-md">
+                        <option value="">Selecione um produto</option>
+                        <% products.forEach(product=> { %>
+                          <option value="<%= product.id %>" data-price="<%= product.selling_price %>"
+                            data-stock="<%= product.quantity %>">
+                            <%= product.name %> (Estoque: <%= product.quantity %>)
+                          </option>
+                          <% }) %>
+                      </select>
+                    </div>
+                    <div class="col-span-2">
+                      <label class="block text-sm font-medium text-gray-400">Quantidade</label>
+                      <input type="number" name="items[0][quantity]" required min="1"
+                        class="quantity-input mt-1 block w-full bg-gray-700 border-gray-600 text-white rounded-md">
+                    </div>
+                    <div class="col-span-2">
+                      <label class="block text-sm font-medium text-gray-400">Preço Un.</label>
+                      <input type="number" name="items[0][unit_price]" required step="0.01"
+                        class="unit-price-input mt-1 block w-full bg-gray-700 border-gray-600 text-white rounded-md"
+                        readonly>
+                    </div>
+                    <div class="col-span-2">
+                      <label class="block text-sm font-medium text-gray-400">Total</label>
+                      <input type="text"
+                        class="item-total mt-1 block w-full bg-gray-700 border-gray-600 text-white rounded-md" readonly>
+                    </div>
+                    <div class="col-span-1 flex items-end">
+                      <button type="button" class="remove-product text-red-500 hover:text-red-400 p-2">
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <button type="button" id="add-product" class="text-primary hover:text-primary/80">
+                <i class="fas fa-plus mr-2"></i>Adicionar Produto
+              </button>
+
+              <!-- Total da Venda -->
+              <div class="flex justify-end space-x-4 text-lg border-t border-gray-700 pt-4">
+                <span class="text-gray-400">Total:</span>
+                <span id="total-amount" class="text-white font-bold">R$ 0,00</span>
+              </div>
+
+              <!-- Observações -->
+              <div>
+                <label class="block text-sm font-medium text-gray-400">Observações</label>
+                <textarea name="notes" class="mt-1 block w-full bg-gray-700 border-gray-600 text-white rounded-md"
+                  rows="3"></textarea>
+              </div>
+        </div>
+
+        <div class="flex justify-end space-x-4">
+          <a href="/sales" class="px-4 py-2 text-gray-400 hover:text-white">Cancelar</a>
+          <button type="submit" class="bg-primary hover:bg-primary/80 text-white px-6 py-2 rounded-lg">
+            Finalizar Venda
+          </button>
+        </div>
+      </form>
+</div>
+<%- contentFor('script') %>
+<script src="/js/sales.js"></script>

@@ -58,6 +58,7 @@ class CompanyController {
             });
         }
     }
+
     static async addUser(req, res) {
         try {
             const { userId, companyId } = req.body;
@@ -88,7 +89,6 @@ class CompanyController {
         }
     }
 
-
     static async removeUser(req, res) {
         try {
             const { userId, companyId } = req.params;
@@ -110,7 +110,12 @@ class CompanyController {
     static async selectCompany(req, res) {
         try {
             if (req.method === 'GET') {
-                const companies = await Company.getUserCompanies(req.session.user.id);
+                let companies;
+                if (req.session.user.role === 'master') {
+                    companies = await Company.getAll();
+                } else {
+                    companies = await Company.getUserCompanies(req.session.user.id);
+                }
                 return res.render('companies/select', { companies });
             }
     
@@ -120,7 +125,7 @@ class CompanyController {
             }
     
             // Atualizar a empresa atual do usuário
-            await User.update(req.session.user.id, { last_company_id: companyId });
+            await Company.setUserLastCompany(req.session.user.id, companyId);
             
             // Atualizar a sessão
             req.session.user.last_company_id = companyId;

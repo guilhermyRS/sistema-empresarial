@@ -51,7 +51,7 @@
                                 </div>
                             </a>
                         </li>
-            
+
                         <!-- Link de Produtos (para master e admin) -->
                         <li>
                             <a href="/products"
@@ -67,38 +67,71 @@
                                 </div>
                             </a>
                         </li>
-            
-                        <% if (locals.user.role === 'master') { %>
+
+                        <!-- Add this after the Products link in the sidebar -->
+                        <li>
+                            <a href="/sales"
+                                class="group flex items-center p-2 rounded-lg hover:bg-primary hover:bg-opacity-20 transition-colors">
+                                <div class="w-6 flex-none flex justify-center">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </div>
+                                <span class="transition-opacity duration-300 ml-2 truncate"
+                                    :class="{'opacity-0': !isOpen}">Vendas</span>
+                                <div class="absolute left-full ml-2 px-2 py-1 bg-dark text-sm rounded-md invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-opacity"
+                                    :class="{'hidden': isOpen}">
+                                    Vendas
+                                </div>
+                            </a>
+                        </li>
+
+                        <% if (locals.user) { %>
                             <li>
-                                <a href="/users"
+                                <a href="/clients"
                                     class="group flex items-center p-2 rounded-lg hover:bg-primary hover:bg-opacity-20 transition-colors">
                                     <div class="w-6 flex justify-center">
                                         <i class="fas fa-users"></i>
                                     </div>
                                     <span class="transition-opacity duration-300 ml-2 truncate"
-                                        :class="{'opacity-0': !isOpen}">Usuários</span>
+                                        :class="{'opacity-0': !isOpen}">Clientes</span>
                                     <div class="absolute left-full ml-2 px-2 py-1 bg-dark text-sm rounded-md invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-opacity"
                                         :class="{'hidden': isOpen}">
-                                        Usuários
+                                        Clientes
                                     </div>
                                 </a>
                             </li>
-                            <li>
-                                <a href="/companies"
-                                    class="group flex items-center p-2 rounded-lg hover:bg-primary hover:bg-opacity-20 transition-colors">
-                                    <div class="w-6 flex justify-center">
-                                        <i class="fas fa-building"></i>
-                                    </div>
-                                    <span class="transition-opacity duration-300 ml-2 truncate"
-                                        :class="{'opacity-0': !isOpen}">Empresas</span>
-                                    <div class="absolute left-full ml-2 px-2 py-1 bg-dark text-sm rounded-md invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-opacity"
-                                        :class="{'hidden': isOpen}">
-                                        Empresas
-                                    </div>
-                                </a>
-                            </li>
-                        <% } %>
-                    <% } %>
+                            <% } %>
+
+                                <% if (locals.user.role==='master' ) { %>
+                                    <li>
+                                        <a href="/users"
+                                            class="group flex items-center p-2 rounded-lg hover:bg-primary hover:bg-opacity-20 transition-colors">
+                                            <div class="w-6 flex justify-center">
+                                                <i class="fas fa-users"></i>
+                                            </div>
+                                            <span class="transition-opacity duration-300 ml-2 truncate"
+                                                :class="{'opacity-0': !isOpen}">Usuários</span>
+                                            <div class="absolute left-full ml-2 px-2 py-1 bg-dark text-sm rounded-md invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-opacity"
+                                                :class="{'hidden': isOpen}">
+                                                Usuários
+                                            </div>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="/companies"
+                                            class="group flex items-center p-2 rounded-lg hover:bg-primary hover:bg-opacity-20 transition-colors">
+                                            <div class="w-6 flex justify-center">
+                                                <i class="fas fa-building"></i>
+                                            </div>
+                                            <span class="transition-opacity duration-300 ml-2 truncate"
+                                                :class="{'opacity-0': !isOpen}">Empresas</span>
+                                            <div class="absolute left-full ml-2 px-2 py-1 bg-dark text-sm rounded-md invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-opacity"
+                                                :class="{'hidden': isOpen}">
+                                                Empresas
+                                            </div>
+                                        </a>
+                                    </li>
+                                    <% } %>
+                                        <% } %>
                 </ul>
             </nav>
             <% if (locals.user) { %>
@@ -232,7 +265,14 @@
         updateSidebarState();
 
         sidebarToggle.addEventListener('click', toggleSidebar);
+
     </script>
+
+<%- script %>
+
+<script>
+    console.log('Layout carregado');
+</script>
 </body>
 
 </html>

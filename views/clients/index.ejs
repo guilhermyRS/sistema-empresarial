@@ -1,0 +1,42 @@
+<div class="p-6">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold">Clientes</h1>
+        <a href="/clients/new" class="bg-primary px-4 py-2 rounded-lg hover:bg-opacity-80">Novo Cliente</a>
+    </div>
+
+    <div class="bg-gray-800 rounded-lg p-6 overflow-x-auto">
+        <table class="w-full min-w-[800px]">
+            <thead>
+                <tr class="text-left border-b border-gray-700">
+                    <th class="pb-2">Nome</th>
+                    <th class="pb-2">CPF</th>
+                    <th class="pb-2">Email</th>
+                    <th class="pb-2">Telefone</th>
+                    <th class="pb-2">Data de Nascimento</th>
+                    <th class="pb-2">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% clients.forEach(client => { %>
+                    <tr class="border-b border-gray-700">
+                        <td class="py-3"><%= client.name || '-' %></td>
+                        <td class="py-3"><%= client.cpf || '-' %></td>
+                        <td class="py-3"><%= client.email || '-' %></td>
+                        <td class="py-3"><%= client.phone || '-' %></td>
+                        <td class="py-3"><%= client.birth_date ? new Date(client.birth_date).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : '-' %></td>
+                        <td class="py-3 flex space-x-2">
+                            <a href="/clients/<%= client.id %>/edit" class="text-primary hover:text-primary-dark">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <form action="/clients/<%= client.id %>?_method=DELETE" method="POST" class="inline">
+                                <button type="submit" class="text-red-500 hover:text-red-400" onclick="return confirm('Tem certeza que deseja excluir este cliente?')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+</div>

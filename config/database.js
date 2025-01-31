@@ -5,9 +5,9 @@ const bcrypt = require('bcryptjs');
 const dbPath = path.resolve(__dirname, '../database.sqlite');
 const db = new sqlite3.Database(dbPath, (err) => {
     if (err) {
-        console.error('Error connecting to database:', err);
+        console.error('Erro ao conectar ao banco de dados:', err);
     } else {
-        console.log('Connected to SQLite database');
+        console.log('Conectado ao banco de dados SQLite');
         initializeDatabase();
     }
 });
@@ -18,7 +18,7 @@ function runQuery(query) {
     return new Promise((resolve, reject) => {
         db.run(query, (err) => {
             if (err) {
-                console.error('Error running query:', query, err);
+                console.error('Erro ao executar query:', query, err);
                 reject(err);
             } else {
                 resolve();
@@ -37,7 +37,7 @@ async function initializeDatabase() {
             last_company_id INTEGER,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP
         )`);
-        console.log('Users table created or already exists');
+        console.log('Tabela de usuários criada ou já existe');
 
         await runQuery(`CREATE TABLE IF NOT EXISTS companies (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -47,7 +47,7 @@ async function initializeDatabase() {
             created_by INTEGER,
             FOREIGN KEY(created_by) REFERENCES users(id)
         )`);
-        console.log('Companies table created or already exists');
+        console.log('Tabela de empresas criada ou já existe');
 
         await runQuery(`CREATE TABLE IF NOT EXISTS user_companies (
             user_id INTEGER,
@@ -57,7 +57,7 @@ async function initializeDatabase() {
             FOREIGN KEY(company_id) REFERENCES companies(id) ON DELETE CASCADE,
             PRIMARY KEY(user_id, company_id)
         )`);
-        console.log('User-companies table created or already exists');
+        console.log('Tabela de usuários-empresas criada ou já existe');
 
         await runQuery(`CREATE TABLE IF NOT EXISTS products (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -78,7 +78,61 @@ async function initializeDatabase() {
             FOREIGN KEY(company_id) REFERENCES companies(id) ON DELETE CASCADE,
             FOREIGN KEY(created_by) REFERENCES users(id)
         )`);
-        console.log('Products table created or already exists');
+        console.log('Tabela de produtos criada ou já existe');
+
+        await runQuery(`CREATE TABLE IF NOT EXISTS clients (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT,
+            email TEXT,
+            phone TEXT,
+            cpf TEXT,
+            birth_date TEXT,
+            address TEXT,
+            company_id INTEGER NOT NULL,
+            created_by INTEGER NOT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY(company_id) REFERENCES companies(id) ON DELETE CASCADE,
+            FOREIGN KEY(created_by) REFERENCES users(id)
+        )`);
+        console.log('Tabela de clientes criada ou já existe');
+
+        await runQuery(`CREATE TABLE IF NOT EXISTS sales (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            client_id INTEGER NOT NULL,
+            company_id INTEGER NOT NULL,
+            created_by INTEGER NOT NULL,
+            total_amount DECIMAL(10,2) NOT NULL,
+            sale_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+            status TEXT DEFAULT 'completed',
+            notes TEXT,
+            FOREIGN KEY(client_id) REFERENCES clients(id),
+            FOREIGN KEY(company_id) REFERENCES companies(id),
+            FOREIGN KEY(created_by) REFERENCES users(id)
+        )`);
+        console.log('Tabela de vendas criada ou já existe');
+
+        await runQuery(`CREATE TABLE IF NOT EXISTS sale_items (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            sale_id INTEGER NOT NULL,
+            product_id INTEGER NOT NULL,
+            quantity INTEGER NOT NULL,
+            unit_price DECIMAL(10,2) NOT NULL,
+            total_price DECIMAL(10,2) NOT NULL,
+            FOREIGN KEY(sale_id) REFERENCES sales(id) ON DELETE CASCADE,
+            FOREIGN KEY(product_id) REFERENCES products(id)
+        )`);
+        console.log('Tabela de itens de venda criada ou já existe');
+
+        await runQuery(`CREATE TRIGGER IF NOT EXISTS update_product_quantity 
+            AFTER INSERT ON sale_items
+            BEGIN
+                UPDATE products 
+                SET quantity = quantity - NEW.quantity
+                WHERE id = NEW.product_id;
+            END;
+        `);
+        console.log('Trigger para atualização da quantidade de produtos criada');
 
         await runQuery(`CREATE TRIGGER IF NOT EXISTS update_products_timestamp 
             AFTER UPDATE ON products
@@ -86,12 +140,12 @@ async function initializeDatabase() {
                 UPDATE products SET updated_at = CURRENT_TIMESTAMP WHERE id = NEW.id;
             END;
         `);
-        console.log('Trigger for updating products timestamp created or already exists');
+        console.log('Trigger para atualização de timestamp dos produtos criada ou já existe');
 
         await createMasterUser();
-        console.log('Database initialized successfully');
+        console.log('Banco de dados inicializado com sucesso');
     } catch (error) {
-        console.error('Error initializing database:', error);
+        console.error('Erro ao inicializar o banco de dados:', error);
     }
 }
 
@@ -111,7 +165,7 @@ function createMasterUser() {
                         (err) => {
                             if (err) reject(err);
                             else {
-                                console.log('Master user created successfully');
+                                console.log('Usuário master criado com sucesso');
                                 resolve();
                             }
                         }
@@ -120,7 +174,7 @@ function createMasterUser() {
                     reject(err);
                 }
             } else {
-                console.log('Master user already exists');
+                console.log('Usuário master já existe');
                 resolve();
             }
         });

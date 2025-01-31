@@ -1,0 +1,127 @@
+<div class="space-y-6">
+  <div class="flex justify-between items-center">
+      <h1 class="text-2xl font-bold">Vendas</h1>
+      <a href="/sales/create" class="bg-primary hover:bg-primary/80 text-white px-4 py-2 rounded-lg">
+          <i class="fas fa-plus mr-2"></i>Nova Venda
+      </a>
+  </div>
+
+  <div class="bg-gray-800 rounded-lg overflow-hidden">
+      <table class="min-w-full divide-y divide-gray-700">
+          <thead class="bg-gray-700">
+              <tr>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                      Data
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                      Cliente
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                      Vendedor
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                      Total
+                  </th>
+                  <th class="px-6 py-3 text-right text-xs font-medium text-gray-300 uppercase tracking-wider">
+                      Ações
+                  </th>
+              </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-700">
+              <% sales.forEach(sale => { %>
+                  <tr class="hover:bg-gray-700/50">
+                      <td class="px-6 py-4 whitespace-nowrap">
+                          <%= new Date(sale.sale_date).toLocaleString('pt-BR') %>
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap">
+                          <%= sale.client_name %>
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap">
+                          <%= sale.seller_name %>
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap">
+                          R$ <%= sale.total_amount.toFixed(2) %>
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-right text-sm space-x-2">
+                          <a href="/sales/<%= sale.id %>" class="text-primary hover:text-primary/80">
+                              <i class="fas fa-eye"></i>
+                          </a>
+                          <form action="/sales/<%= sale.id %>?_method=DELETE" method="POST" class="inline">
+                              <button type="submit" class="text-red-500 hover:text-red-400"
+                              onclick="return confirm('Tem certeza que deseja excluir esta venda?')">
+                              <i class="fas fa-trash"></i>
+                          </button>
+                      </form>
+                  </td>
+              </tr>
+          <% }) %>
+      </tbody>
+  </table>
+
+  <% if (sales.length === 0) { %>
+      <div class="text-center py-8 text-gray-400">
+          <i class="fas fa-shopping-cart text-4xl mb-4"></i>
+          <p>Nenhuma venda encontrada</p>
+      </div>
+  <% } %>
+</div>
+
+<!-- Filtros e Estatísticas -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+  <!-- Filtros -->
+  <div class="bg-gray-800 p-6 rounded-lg">
+      <h2 class="text-lg font-semibold mb-4">Filtros</h2>
+      <form class="space-y-4">
+          <div class="grid grid-cols-2 gap-4">
+              <div>
+                  <label class="block text-sm font-medium text-gray-400 mb-1">Data Inicial</label>
+                  <input type="date" name="start_date" class="w-full bg-gray-700 border-gray-600 text-white rounded-md">
+              </div>
+              <div>
+                  <label class="block text-sm font-medium text-gray-400 mb-1">Data Final</label>
+                  <input type="date" name="end_date" class="w-full bg-gray-700 border-gray-600 text-white rounded-md">
+              </div>
+          </div>
+          <div class="flex justify-end">
+              <button type="submit" class="bg-primary hover:bg-primary/80 text-white px-4 py-2 rounded-lg">
+                  <i class="fas fa-filter mr-2"></i>Filtrar
+              </button>
+          </div>
+      </form>
+  </div>
+
+  <!-- Estatísticas -->
+  <div class="bg-gray-800 p-6 rounded-lg">
+      <h2 class="text-lg font-semibold mb-4">Resumo</h2>
+      <div class="grid grid-cols-2 gap-4">
+          <div class="bg-gray-700/50 p-4 rounded-lg">
+              <p class="text-sm text-gray-400">Total de Vendas</p>
+              <p class="text-2xl font-bold text-primary">
+                  <%= sales.length %>
+              </p>
+          </div>
+          <div class="bg-gray-700/50 p-4 rounded-lg">
+              <p class="text-sm text-gray-400">Valor Total</p>
+              <p class="text-2xl font-bold text-primary">
+                  R$ <%= sales.reduce((total, sale) => total + parseFloat(sale.total_amount), 0).toFixed(2) %>
+              </p>
+          </div>
+      </div>
+  </div>
+</div>
+
+<!-- Export Options -->
+<div class="flex justify-end mt-6 space-x-4">
+  <button class="flex items-center px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm">
+      <i class="fas fa-file-excel mr-2"></i>
+      Exportar Excel
+  </button>
+  <button class="flex items-center px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm">
+      <i class="fas fa-file-pdf mr-2"></i>
+      Exportar PDF
+  </button>
+</div>
+</div>
+
+<%- contentFor('script') %>
+<script src="/js/sales.js"></script>

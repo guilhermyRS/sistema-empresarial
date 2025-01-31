@@ -8,13 +8,16 @@ const expressLayouts = require('express-ejs-layouts');
 const app = express();
 
 
+// Configurações do EJS
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(expressLayouts);
-app.set('layout', 'layouts/main'); // Define o layout padrão
-app.set("layout extractScripts", true);
-app.set("layout extractStyles", true);
+app.set('layout', 'layouts/main');
+app.set('layout extractScripts', true);
+app.set('layout extractStyles', true);
 
+// No seu app.js
+app.use('/js', express.static(path.join(__dirname, 'public/js')));
 // Middleware
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -63,8 +66,10 @@ app.get('/login', (req, res) => {
 app.use('/auth', require('./routes/auth'));
 app.use('/users', require('./routes/users'));
 app.use('/companies', require('./routes/companies'));
-
 app.use('/products', require('./routes/products'));
+app.use('/clients', require('./routes/clients'));
+// In app.js, add:
+app.use('/sales', require('./routes/sales'));
 
 
 // Rota padrão
